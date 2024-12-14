@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private GameResources gameResources;
     [SerializeField] private PersonManager personManager;
+    
+    private float lastSelectionTime;
+    private const float SELECTION_DELAY = 1.5f;
 
     public GameResources Resources => gameResources;
     
@@ -23,8 +26,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-       
     }
+
     private void Start()
     {
         personManager.Initialize();
@@ -38,15 +41,24 @@ public class GameManager : MonoBehaviour
             return;
         }
     }
+
     private void Update()
     {
         HandleInput();
     }
+
     private void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            personManager.SelectRandomPerson();
+            if (Time.time - lastSelectionTime >= SELECTION_DELAY)
+            {
+                if (personManager.CanSelectNewPerson())
+                {
+                    personManager.SelectRandomPerson();
+                    lastSelectionTime = Time.time;
+                }
+            }
         }
     }
 

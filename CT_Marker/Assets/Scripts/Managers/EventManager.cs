@@ -7,6 +7,7 @@ public class EventManager : MonoBehaviour
     public static EventManager Instance { get; private set; }
     public event Action<PersonController> OnPersonSelected;
     public event Action<PersonController> OnPersonReachedTable;
+    public event Action<PersonController> OnPersonReachedRightSide;
     public event Action<PersonController> OnPersonStartedInteraction;
     public event Action<PersonController> OnPersonFinishedInteraction;
     public event Action<PersonController> OnPersonJoinedQueue;
@@ -28,9 +29,14 @@ public class EventManager : MonoBehaviour
     {
         OnPersonSelected?.Invoke(person);
     }
+    
     public void PersonReachedTable(PersonController person)
     {
         OnPersonReachedTable?.Invoke(person);
+    }
+    public void PersonReachedRightSide(PersonController person)
+    {
+        OnPersonReachedRightSide?.Invoke(person);
     }
     public void PersonStartedInteraction(PersonController person)
     {
