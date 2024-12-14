@@ -151,6 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 394e2e95820fe2542af94eaa8806cf96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameResources: {fileID: 11400000, guid: 18c14fc2ce9ff20448cc2bd0e3f7234a, type: 2}
   personManager: {fileID: 682378610}
 --- !u!4 &2599157
 Transform:
@@ -480,6 +481,6 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 103512851}
   - {fileID: 963194228}
   - {fileID: 705507995}
-  - {fileID: 103512851}

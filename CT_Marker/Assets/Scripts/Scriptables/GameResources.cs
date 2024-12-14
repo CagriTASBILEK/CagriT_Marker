@@ -1,9 +1,11 @@
+using Controller;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "GameResources", menuName = "Settings/Game Resources")]
 public class GameResources : ScriptableObject
 {
     [Header("Prefabs")]
+    public PersonController personPrefab;
     public GameObject tablePrefab;
 
     [Header("Person Settings")]

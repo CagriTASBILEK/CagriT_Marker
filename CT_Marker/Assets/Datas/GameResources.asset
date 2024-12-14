@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14da75d8e429b70469c8bc092b3e46bd, type: 3}
   m_Name: GameResources
   m_EditorClassIdentifier: 
+  personPrefab: {fileID: 3869493458962809179, guid: 500d5634d5df9f449a1262b562b1d831, type: 3}
   tablePrefab: {fileID: 541576446178948311, guid: bae9c3be4c8f5c448ad4fb611b979202, type: 3}
   minSpeed: 2
   maxSpeed: 10
   rotationSpeed: 5
   stoppingDistance: 0.1
   totalPeople: 30
-  spawnRadius: 30
+  spawnRadius: 40
   rightSideOffset: 30
   rightSideSpawnRadius: 5
   queueStartOffset: 2
