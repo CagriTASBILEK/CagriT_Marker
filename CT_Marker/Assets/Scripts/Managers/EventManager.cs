@@ -1,53 +1,57 @@
-using UnityEngine;
 using System;
 using Controller;
+using UnityEngine;
 
-public class EventManager : MonoBehaviour
+namespace Managers
 {
-    public static EventManager Instance { get; private set; }
-    public event Action<PersonController> OnPersonReachedTable;
-    public event Action<PersonController> OnPersonFinishedInteraction;
-    public event Action<PersonController> OnCheckQueuePosition;
-    
-    private void Awake()
+    public class EventManager : MonoBehaviour
     {
-        if (Instance == null)
+        public static EventManager Instance { get; private set; }
+        public event Action<PersonController> OnPersonReachedTable;
+        public event Action<PersonController> OnPersonFinishedInteraction;
+        public event Action<PersonController> OnCheckQueuePosition;
+
+        private void Awake()
         {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
-        else
+
+        public void PersonReachedTable(PersonController person)
         {
-            Destroy(gameObject);
+            OnPersonReachedTable?.Invoke(person);
         }
-    }
-   
-    
-    public void PersonReachedTable(PersonController person)
-    {
-        OnPersonReachedTable?.Invoke(person);
-    }
-    public void PersonFinishedInteraction(PersonController person)
-    {
-        OnPersonFinishedInteraction?.Invoke(person);
-    }
-    
-    public void CheckQueuePosition(PersonController person)
-    {
-        OnCheckQueuePosition?.Invoke(person);
-    }
-    
-    public void ClearAllEvents()
-    {
-        OnPersonReachedTable = null;
-        OnPersonFinishedInteraction = null;
-        OnCheckQueuePosition = null;
-    }
-    private void OnDestroy()
-    {
-        if (Instance == this)
+
+        public void PersonFinishedInteraction(PersonController person)
         {
-            Instance = null;
+            OnPersonFinishedInteraction?.Invoke(person);
+        }
+
+        public void CheckQueuePosition(PersonController person)
+        {
+            OnCheckQueuePosition?.Invoke(person);
+        }
+
+        public void ClearAllEvents()
+        {
+            OnPersonReachedTable = null;
+            OnPersonFinishedInteraction = null;
+            OnCheckQueuePosition = null;
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
     }
 }

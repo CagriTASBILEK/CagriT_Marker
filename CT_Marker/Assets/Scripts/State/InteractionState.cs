@@ -1,30 +1,34 @@
 using Controller;
+using Managers;
 using UnityEngine;
 
-public class InteractingState : BasePersonState
+namespace State
 {
-    private float interactionTimer;
-
-    public InteractingState(PersonController person) : base(person)
+    public class InteractingState : BasePersonState
     {
-        interactionTimer = 0f;
-    }
+        private float interactionTimer;
 
-    public override void EnterState()
-    {
-    }
-
-    public override void UpdateState()
-    {
-        interactionTimer += Time.deltaTime;
-        
-        if (interactionTimer >= GameManager.Instance.Resources.interactionDuration)
+        public InteractingState(PersonController person) : base(person)
         {
-            EventManager.Instance.PersonFinishedInteraction(person);
+            interactionTimer = 0f;
         }
-    }
-    public override void ExitState() 
-    {
-        interactionTimer = 0f;
+
+        public override void EnterState()
+        {
+        }
+
+        public override void UpdateState()
+        {
+            interactionTimer += Time.deltaTime;
+        
+            if (interactionTimer >= GameManager.Instance.Resources.interactionDuration)
+            {
+                EventManager.Instance.PersonFinishedInteraction(person);
+            }
+        }
+        public override void ExitState() 
+        {
+            interactionTimer = 0f;
+        }
     }
 }

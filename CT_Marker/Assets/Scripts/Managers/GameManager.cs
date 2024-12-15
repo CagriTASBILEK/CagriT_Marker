@@ -1,68 +1,70 @@
-using System.Collections;
-using System.Collections.Generic;
-using Managers;
 using UnityEngine;
-public class GameManager : MonoBehaviour
+
+namespace Managers
 {
-   public static GameManager Instance { get; private set; }
-
-    [Header("References")]
-    [SerializeField] private GameResources gameResources;
-    [SerializeField] public PersonManager personManager;
-    
-    private float lastSelectionTime;
-    private const float SELECTION_DELAY = 1.5f;
-
-    public GameResources Resources => gameResources;
-    
-    private void Awake()
+    public class GameManager : MonoBehaviour
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
+        public static GameManager Instance { get; private set; }
 
-    private void Start()
-    {
-        personManager.Initialize();
-        
-        if (personManager == null || gameResources == null)
-        {
-            return;
-        }
-    }
+        [Header("References")] [SerializeField]
+        private GameResources gameResources;
 
-    private void Update()
-    {
-        HandleInput();
-    }
+        [SerializeField] public PersonManager personManager;
 
-    private void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
+        private float lastSelectionTime;
+        private const float SELECTION_DELAY = 1.5f;
+
+        public GameResources Resources => gameResources;
+
+        private void Awake()
         {
-            if (Time.time - lastSelectionTime >= SELECTION_DELAY)
+            if (Instance == null)
             {
-                if (personManager.CanSelectNewPerson())
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        private void Start()
+        {
+            personManager.Initialize();
+
+            if (personManager == null || gameResources == null)
+            {
+                return;
+            }
+        }
+
+        private void Update()
+        {
+            HandleInput();
+        }
+
+        private void HandleInput()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (Time.time - lastSelectionTime >= SELECTION_DELAY)
                 {
-                    personManager.SelectRandomPerson();
-                    lastSelectionTime = Time.time;
+                    if (personManager.CanSelectNewPerson())
+                    {
+                        personManager.SelectRandomPerson();
+                        lastSelectionTime = Time.time;
+                    }
                 }
             }
         }
-    }
 
-    private void OnDestroy()
-    {
-        if (Instance == this)
+        private void OnDestroy()
         {
-            Instance = null;
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
     }
 }

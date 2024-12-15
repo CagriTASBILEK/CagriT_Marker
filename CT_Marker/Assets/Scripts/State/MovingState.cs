@@ -1,73 +1,77 @@
 using System.Collections.Generic;
 using Controller;
+using Managers;
 using UnityEngine;
 
-public class MovingState : BasePersonState
+namespace State
 {
-    private Vector3 targetPosition;
-    private bool isMovingToRightSide;
-    private float checkInterval = 0.1f;
-    private float nextCheckTime;
-    private float minDistanceToCheck = 1f;
-
-
-    public MovingState(PersonController person, Vector3 targetPosition, bool isMovingToRightSide = false) 
-        : base(person)
+    public class MovingState : BasePersonState
     {
-        this.targetPosition = targetPosition;
-        this.isMovingToRightSide = isMovingToRightSide;
-        nextCheckTime = Time.time + checkInterval;
-    }
+        private Vector3 targetPosition;
+        private bool isMovingToRightSide;
+        private float checkInterval = 0.1f;
+        private float nextCheckTime;
+        private float minDistanceToCheck = 1f;
 
-    public override void EnterState()
-    {
-        person.StartMoving(targetPosition);
-    }
 
-    public override void UpdateState()
-    {
-        if (!isMovingToRightSide)
+        public MovingState(PersonController person, Vector3 targetPosition, bool isMovingToRightSide = false) 
+            : base(person)
         {
-            float distanceToTarget = Vector3.Distance(person.transform.position, targetPosition);
-            if (distanceToTarget > minDistanceToCheck && Time.time >= nextCheckTime)
-            {
-                CheckQueuePosition();
-                nextCheckTime = Time.time + checkInterval;
-            }
+            this.targetPosition = targetPosition;
+            this.isMovingToRightSide = isMovingToRightSide;
+            nextCheckTime = Time.time + checkInterval;
+        }
 
-            if (person.HasReachedDestination())
+        public override void EnterState()
+        {
+            person.StartMoving(targetPosition);
+        }
+
+        public override void UpdateState()
+        {
+            if (!isMovingToRightSide)
             {
-                EventManager.Instance.PersonReachedTable(person);
+                float distanceToTarget = Vector3.Distance(person.transform.position, targetPosition);
+                if (distanceToTarget > minDistanceToCheck && Time.time >= nextCheckTime)
+                {
+                    CheckQueuePosition();
+                    nextCheckTime = Time.time + checkInterval;
+                }
+
+                if (person.HasReachedDestination())
+                {
+                    EventManager.Instance.PersonReachedTable(person);
+                }
             }
         }
-    }
-    private void CheckQueuePosition()
-    {
-        var personManager = GameManager.Instance.personManager;
-        var queueList = new List<PersonController>(personManager.queuedPeople);
-        int currentIndex = queueList.IndexOf(person);
-
-        if (currentIndex > 0)
+        private void CheckQueuePosition()
         {
-            PersonController personInFront = queueList[currentIndex - 1];
+            var personManager = GameManager.Instance.personManager;
+            var queueList = new List<PersonController>(personManager.queuedPeople);
+            int currentIndex = queueList.IndexOf(person);
 
-            if (person.transform.position.z > personInFront.transform.position.z)
+            if (currentIndex > 0)
             {
-                queueList[currentIndex] = personInFront;
-                queueList[currentIndex - 1] = person;
+                PersonController personInFront = queueList[currentIndex - 1];
+
+                if (person.transform.position.z > personInFront.transform.position.z)
+                {
+                    queueList[currentIndex] = personInFront;
+                    queueList[currentIndex - 1] = person;
                 
-                personManager.queuedPeople = new Queue<PersonController>(queueList);
+                    personManager.queuedPeople = new Queue<PersonController>(queueList);
                 
-                personManager.UpdateQueuePositions();
+                    personManager.UpdateQueuePositions();
                 
-                EventManager.Instance.CheckQueuePosition(person);
+                    EventManager.Instance.CheckQueuePosition(person);
+                }
             }
         }
-    }
 
 
-    public override void ExitState()
-    {
-        person.StopMoving();
+        public override void ExitState()
+        {
+            person.StopMoving();
+        }
     }
 }

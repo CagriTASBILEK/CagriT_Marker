@@ -1,15 +1,18 @@
 using Controller;
 
-public abstract class BasePersonState
+namespace State
 {
-    protected PersonController person;
-
-    public BasePersonState(PersonController person)
+    public abstract class BasePersonState
     {
-        this.person = person;
-    }
+        protected PersonController person;
 
-    public virtual void EnterState() { }
-    public virtual void UpdateState() { }
-    public virtual void ExitState() { }
+        public BasePersonState(PersonController person)
+        {
+            this.person = person;
+        }
+
+        public virtual void EnterState() { }
+        public virtual void UpdateState() { }
+        public virtual void ExitState() { }
+    }
 }
