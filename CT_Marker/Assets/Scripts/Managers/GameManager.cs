@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private GameResources gameResources;
-    [SerializeField] private PersonManager personManager;
+    [SerializeField] public PersonManager personManager;
     
     private float lastSelectionTime;
     private const float SELECTION_DELAY = 1.5f;

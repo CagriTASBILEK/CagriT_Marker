@@ -16,12 +16,9 @@ MonoBehaviour:
   tablePrefab: {fileID: 541576446178948311, guid: bae9c3be4c8f5c448ad4fb611b979202, type: 3}
   minSpeed: 2
   maxSpeed: 10
-  rotationSpeed: 5
-  stoppingDistance: 0.1
   totalPeople: 30
   spawnRadius: 40
   rightSideOffset: 30
   rightSideSpawnRadius: 5
-  queueStartOffset: 2
   queueSpacing: 2
   interactionDuration: 5

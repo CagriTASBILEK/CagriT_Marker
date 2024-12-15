@@ -11,8 +11,6 @@ public class GameResources : ScriptableObject
     [Header("Person Settings")]
     public float minSpeed = 2f;
     public float maxSpeed = 10f;
-    public float rotationSpeed = 5f;
-    public float stoppingDistance = 0.1f;
     public int totalPeople = 30;
 
     [Header("Spawn Settings")]
@@ -21,7 +19,6 @@ public class GameResources : ScriptableObject
     public float rightSideSpawnRadius = 5f;
 
     [Header("Queue Settings")]
-    public float queueStartOffset = 2f;
     public float queueSpacing = 2f;
 
     [Header("Interaction Settings")]

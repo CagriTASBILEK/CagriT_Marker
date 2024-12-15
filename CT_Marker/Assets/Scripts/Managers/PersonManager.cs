@@ -12,7 +12,7 @@ namespace Managers
 
     private ObjectPool<PersonController> personPool;
     [SerializeField]private List<PersonController> availablePeople;
-    [SerializeField]private Queue<PersonController> queuedPeople;
+    [SerializeField]public Queue<PersonController> queuedPeople;
     [SerializeField]private PersonController currentInteractingPerson;
 
     private GameResources Resources => GameManager.Instance.Resources;
@@ -74,14 +74,14 @@ namespace Managers
     public void SelectRandomPerson()
     {
         if (availablePeople.Count == 0) return;
-        
+
         int randomIndex = Random.Range(0, availablePeople.Count);
         PersonController selectedPerson = availablePeople[randomIndex];
         availablePeople.RemoveAt(randomIndex);
-        
+
         queuedPeople.Enqueue(selectedPerson);
         
-        if (currentInteractingPerson == null && queuedPeople.Peek() == selectedPerson)
+        if (currentInteractingPerson == null)
         {
             ProcessNextPersonInQueue();
         }
@@ -130,7 +130,7 @@ namespace Managers
             Vector3 rightSidePosition = GetRightSidePosition();
             person.SetState(new MovingState(person, rightSidePosition, true));
             currentInteractingPerson = null;
-            
+
             if (queuedPeople.Count > 0)
             {
                 ProcessNextPersonInQueue();
@@ -146,37 +146,28 @@ namespace Managers
     private void ProcessNextPersonInQueue()
     {
         if (queuedPeople.Count == 0) return;
-        
+
         PersonController nextPerson = queuedPeople.Dequeue();
         currentInteractingPerson = nextPerson;
-        nextPerson.SetState(new MovingState(nextPerson, tableTransform.position+ Vector3.back));
-        
-        UpdateQueuePositions(); 
+        nextPerson.SetState(new MovingState(nextPerson, tableTransform.position));
+
+        UpdateQueuePositions();
     }
         
-    private void UpdateQueuePositions()
+    public void UpdateQueuePositions()
     {
         List<PersonController> queueList = new List<PersonController>(queuedPeople);
-    
+
         for (int i = 0; i < queueList.Count; i++)
         {
             PersonController person = queueList[i];
-            Vector3 targetPosition;
-
-            if (i == 0) 
-            {
-                targetPosition = currentInteractingPerson != null 
-                    ? currentInteractingPerson.transform.position + Vector3.back * Resources.queueStartOffset
-                    : tableTransform.position;
-            }
-            else
-            {
-                PersonController personInFront = queueList[i - 1];
-                targetPosition = personInFront.transform.position + Vector3.back * Resources.queueSpacing;
-            }
-
+            Vector3 targetPosition = GetQueuePosition(i);
             person.SetState(new MovingState(person, targetPosition, false));
         }
+    }
+    private Vector3 GetQueuePosition(int index)
+    {
+        return (tableTransform.position+Vector3.back) + Vector3.back * Resources.queueSpacing * (index + 1);
     }
     private void HandleQueuePositionCheck(PersonController person)
     {
