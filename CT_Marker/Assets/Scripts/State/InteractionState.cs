@@ -12,7 +12,6 @@ public class InteractingState : BasePersonState
 
     public override void EnterState()
     {
-        EventManager.Instance.PersonStartedInteraction(person);
     }
 
     public override void UpdateState()

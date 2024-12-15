@@ -4,7 +4,7 @@ using Managers;
 using UnityEngine;
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance { get; private set; }
+   public static GameManager Instance { get; private set; }
 
     [Header("References")]
     [SerializeField] private GameResources gameResources;
@@ -32,11 +32,7 @@ public class GameManager : MonoBehaviour
     {
         personManager.Initialize();
         
-        if (personManager == null)
-        {
-            return;
-        }
-        if (gameResources == null)
+        if (personManager == null || gameResources == null)
         {
             return;
         }

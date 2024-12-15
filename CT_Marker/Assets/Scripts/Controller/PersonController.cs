@@ -5,10 +5,10 @@ namespace Controller
     public class PersonController : MonoBehaviour, IPoolable
     {
         private BasePersonState currentState;
-        private float moveSpeed;
         private Vector3 targetPosition;
         private bool isMoving;
-
+        private float moveSpeed;
+        
         public void Initialize(float speed)
         {
             moveSpeed = speed;

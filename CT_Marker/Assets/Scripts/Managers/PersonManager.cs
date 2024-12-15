@@ -93,6 +93,7 @@ namespace Managers
     {
         EventManager.Instance.OnPersonReachedTable += HandlePersonReachedTable;
         EventManager.Instance.OnPersonFinishedInteraction += HandlePersonFinishedInteraction;
+        EventManager.Instance.OnCheckQueuePosition += HandleQueuePositionCheck;
     }
 
     private void UnsubscribeFromEvents()
@@ -101,6 +102,7 @@ namespace Managers
         {
             EventManager.Instance.OnPersonReachedTable -= HandlePersonReachedTable;
             EventManager.Instance.OnPersonFinishedInteraction -= HandlePersonFinishedInteraction;
+            EventManager.Instance.OnCheckQueuePosition -= HandleQueuePositionCheck;
         }
     }
 
@@ -119,20 +121,6 @@ namespace Managers
             FinishPersonInteraction(person);
         }
     }
-
-    private void StartPersonInteraction(PersonController person)
-    {
-        currentInteractingPerson = person;
-        person.SetState(new InteractingState(person));
-    }
-
-    private void AddPersonToQueue(PersonController person)
-    {
-        person.SetState(new QueueingState(person));
-        queuedPeople.Enqueue(person);
-        UpdateQueuePositions();
-    }
-
     private void FinishPersonInteraction(PersonController person)
     {
         if (currentInteractingPerson == person)
@@ -147,12 +135,6 @@ namespace Managers
             }
         }
     }
-    private void HandlePersonReachedRightSide(PersonController person)
-    {
-        person.SetState(new CompletedState(person));
-        EventManager.Instance.OnPersonReachedRightSide -= HandlePersonReachedRightSide;
-    }
-
     private Vector3 GetRightSidePosition()
     {
         Vector2 randomOffset = Random.insideUnitCircle * Resources.rightSideSpawnRadius;
@@ -165,22 +147,48 @@ namespace Managers
         
         PersonController nextPerson = queuedPeople.Dequeue();
         currentInteractingPerson = nextPerson;
-        nextPerson.SetState(new MovingState(nextPerson, tableTransform.position));
+        nextPerson.SetState(new MovingState(nextPerson, tableTransform.position+ Vector3.back));
         
         UpdateQueuePositions(); 
     }
         
     private void UpdateQueuePositions()
     {
-        int index = 0;
-        foreach (PersonController person in queuedPeople)
+        List<PersonController> queueList = new List<PersonController>(queuedPeople);
+    
+        for (int i = 0; i < queueList.Count; i++)
         {
-            Vector3 queuePosition = tableTransform.position + Vector3.back * 
-                (Resources.queueStartOffset + index * Resources.queueSpacing);
-            person.SetState(new MovingState(person, queuePosition, false));
-            index++;
+            PersonController person = queueList[i];
+            Vector3 targetPosition;
+
+            if (i == 0) 
+            {
+                targetPosition = currentInteractingPerson != null 
+                    ? currentInteractingPerson.transform.position + Vector3.back * Resources.queueStartOffset
+                    : tableTransform.position;
+            }
+            else
+            {
+                PersonController personInFront = queueList[i - 1];
+                targetPosition = personInFront.transform.position + Vector3.back * Resources.queueSpacing;
+            }
+
+            person.SetState(new MovingState(person, targetPosition, false));
         }
     }
+    private void HandleQueuePositionCheck(PersonController person)
+    {
+        if (currentInteractingPerson == null && queuedPeople.Contains(person))
+        {
+            if (queuedPeople.Peek() == person)
+            {
+                ProcessNextPersonInQueue();
+                return;
+            }
+        }
+        UpdateQueuePositions();
+    }
+    
 
     public bool CanSelectNewPerson()
     {

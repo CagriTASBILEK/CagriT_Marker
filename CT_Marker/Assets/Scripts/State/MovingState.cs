@@ -22,14 +22,13 @@ public class MovingState : BasePersonState
         if (person.HasReachedDestination())
         {
             person.StopMoving();
-            if (isMovingToRightSide)
-            {
-                EventManager.Instance.PersonReachedRightSide(person);
-            }
-            else
-            {
-                EventManager.Instance.PersonReachedTable(person);
-            }
+            EventManager.Instance.PersonReachedTable(person);
+            return;
+        }
+
+        if (!isMovingToRightSide)
+        {
+            EventManager.Instance.CheckQueuePosition(person);
         }
     }
 
