@@ -1,64 +1,54 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Controller
-{ 
+{
     public class PersonController : MonoBehaviour, IPoolable
     {
         private BasePersonState currentState;
-        private Vector3 targetPosition;
-        private bool isMoving;
+        private NavMeshAgent agent;
         private float moveSpeed;
-        
+
+        private void Awake()
+        {
+            agent = GetComponent<NavMeshAgent>();
+        }
+
         public void Initialize(float speed)
         {
             moveSpeed = speed;
+            agent.speed = moveSpeed;
             SetState(new IdleState(this));
         }
 
         public void StartMoving(Vector3 destination)
         {
-            targetPosition = destination;
-            isMoving = true;
+            agent.SetDestination(destination);
+            agent.isStopped = false;
         }
 
         public void StopMoving()
         {
-            isMoving = false;
+            agent.isStopped = true;
         }
-    
+
         private void Update()
         {
             currentState?.UpdateState();
-    
-            if (isMoving)
-            {
-                MoveTowardsTarget();
-            }
-        }
-    
-        private void MoveTowardsTarget()
-        {
-            Vector3 direction = (targetPosition - transform.position).normalized;
-            transform.position += direction * moveSpeed * Time.deltaTime;
-
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 
-                GameManager.Instance.Resources.rotationSpeed * Time.deltaTime);
         }
 
         public bool HasReachedDestination()
         {
-            return Vector3.Distance(transform.position, targetPosition) < 
-                   GameManager.Instance.Resources.stoppingDistance;
+            return !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance;
         }
-    
+
         public void SetState(BasePersonState newState)
         {
             currentState?.ExitState();
             currentState = newState;
             currentState.EnterState();
         }
-    
+
         public void OnSpawn()
         {
             SetState(new IdleState(this));
@@ -68,7 +58,7 @@ namespace Controller
         {
             currentState?.ExitState();
             currentState = null;
-            isMoving = false;
+            agent.isStopped = true;
         }
     }
 }

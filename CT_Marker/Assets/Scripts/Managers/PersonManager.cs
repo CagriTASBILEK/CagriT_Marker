@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Controller;
+using Unity.AI.Navigation;
 using UnityEngine;
 
 namespace Managers
@@ -45,6 +46,7 @@ namespace Managers
     {
         GameObject table = Instantiate(Resources.tablePrefab, Vector3.zero, Quaternion.identity);
         tableTransform = table.transform;
+        table.GetComponentInChildren<NavMeshSurface>().BuildNavMesh();
     }
 
     private void SpawnPeople()

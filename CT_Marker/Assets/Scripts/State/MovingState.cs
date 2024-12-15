@@ -21,7 +21,6 @@ public class MovingState : BasePersonState
     {
         if (person.HasReachedDestination())
         {
-            person.StopMoving();
             EventManager.Instance.PersonReachedTable(person);
             return;
         }
