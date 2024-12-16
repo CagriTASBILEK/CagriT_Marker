@@ -56,57 +56,35 @@ public class GameModel
 
         int remainingRolls = TOTAL_ROLLS - currentRollCount;
         int remainingSum = TARGET_TOTAL - totalSum;
-
         
         if (remainingRolls == 1)
         {
             return DistributeValueToDice(remainingSum);
         }
         
-        int targetRollSum;
-        if (ShouldUseSelectedNumber(out int selectedNumber))
+        if (currentRollCount == 8 && !HasNumberAppeared(selectedNumbers[0], 0))
         {
-            targetRollSum = selectedNumber;
+            return DistributeValueToDice(selectedNumbers[0]);
         }
-        else
+        
+        if (currentRollCount == 13 && !HasNumberAppeared(selectedNumbers[1], 1))
         {
-            
-            int averageNeeded = remainingSum / remainingRolls;
-            
-            targetRollSum = Random.Range(
-                Mathf.Max(3, averageNeeded - 2),
-                Mathf.Min(18, averageNeeded + 2)
-            );
+            return DistributeValueToDice(selectedNumbers[1]);
         }
+        
+        if (currentRollCount == 16 && !HasNumberAppeared(selectedNumbers[2], 2))
+        {
+            return DistributeValueToDice(selectedNumbers[2]);
+        }
+        
+        int averageNeeded = remainingSum / remainingRolls;
+        int targetRollSum = Random.Range(
+            Mathf.Max(3, averageNeeded - 2),
+            Mathf.Min(18, averageNeeded + 2)
+        );
 
         return DistributeValueToDice(targetRollSum);
     }
-    
-    private bool ShouldUseSelectedNumber(out int selectedNumber)
-    {
-        selectedNumber = 0;
-        
-        if (currentRollCount < 10 && !HasNumberAppeared(selectedNumbers[0]))
-        {
-            selectedNumber = selectedNumbers[0];
-            return true;
-        }
-        
-        if (currentRollCount >= 5 && currentRollCount < 15 && !HasNumberAppeared(selectedNumbers[1]))
-        {
-            selectedNumber = selectedNumbers[1];
-            return true;
-        }
-        
-        if (currentRollCount >= 10 && !HasNumberAppeared(selectedNumbers[2]))
-        {
-            selectedNumber = selectedNumbers[2];
-            return true;
-        }
-
-        return false;
-    }
-    
     private int[] DistributeValueToDice(int targetSum)
     {
         int[] diceValues = new int[3];
@@ -141,21 +119,22 @@ public class GameModel
             OceanGameEvent.TriggerGameCompleted();
         }
     }
-    private bool HasNumberAppeared(int number)
+    private bool HasNumberAppeared(int number, int index)
     {
-        for (int i = 0; i < previousRollTotals.Count; i++)
+        int startRoll = index == 0 ? 0 : (index == 1 ? 4 : 9);
+        int endRoll = index == 0 ? 9 : (index == 1 ? 14 : 19);
+        
+        for (int i = startRoll; i < previousRollTotals.Count && i <= endRoll; i++)
         {
             if (previousRollTotals[i] == number)
             {
                 return true;
             }
         }
-
         return false;
     }
 
     public int GetCurrentRoll() => currentRollCount;
     public int GetTotalSum() => totalSum;
     public bool IsGameActive() => isGameActive;
-    public List<int> GetSelectedNumbers() => selectedNumbers;
 }

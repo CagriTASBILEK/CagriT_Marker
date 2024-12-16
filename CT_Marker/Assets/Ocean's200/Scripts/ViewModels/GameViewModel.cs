@@ -4,6 +4,7 @@ using UnityEngine;
 public class GameViewModel : MonoBehaviour
 {
     [SerializeField] private DiceViewModel diceViewModel;
+    [SerializeField] private NumberSelectionView numberSelectionPopup;
     
     private GameModel _gameModel;
     private GameView _view;
@@ -18,18 +19,20 @@ public class GameViewModel : MonoBehaviour
     private void OnEnable()
     {
         OceanGameEvent.OnRollCompleted += HandleRollCompleted;
+        OceanGameEvent.OnNumbersSelected += HandleNumbersSelected;
     }
 
     private void OnDisable()
     {
         OceanGameEvent.OnRollCompleted -= HandleRollCompleted;
+        OceanGameEvent.OnNumbersSelected -= HandleNumbersSelected; 
     }
-
-    private void Start()
+    
+    private void HandleNumbersSelected(List<int> selectedNumbers)
     {
-        List<int> testNumbers = new List<int> { 8, 12, 15 };
-        StartGame(testNumbers);
+        StartGame(selectedNumbers);
     }
+    
     public void StartGame(List<int> selectedNumbers)
     {
         if(_gameModel.StartGame(selectedNumbers))
