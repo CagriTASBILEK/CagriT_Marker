@@ -7,14 +7,14 @@ public class GameView : MonoBehaviour
 {
     [Header("UI References")] [SerializeField]
     private TextMeshProUGUI totalText;
-
     [SerializeField] private TextMeshProUGUI rollCountText;
     [SerializeField] private Button rollButton;
     [SerializeField] private DiceView diceView;
 
-    [Header("Selected Numbers UI")] [SerializeField]
-    private TextMeshProUGUI[] selectedNumberTexts;
-
+    [Header("Selected Numbers UI")] 
+    [SerializeField] private TextMeshProUGUI currentRollResultText;
+    [SerializeField]private TextMeshProUGUI[] selectedNumberTexts;
+    
     private GameViewModel _viewModel;
 
     private void Awake()
@@ -29,6 +29,7 @@ public class GameView : MonoBehaviour
         OceanGameEvent.OnTotalScoreUpdated += UpdateTotalScore;
         OceanGameEvent.OnGameStarted += OnGameStarted;
         OceanGameEvent.OnGameCompleted += OnGameCompleted;
+        OceanGameEvent.OnRollCompleted += UpdateCurrentRollResult;
     }
 
     private void OnDisable()
@@ -37,14 +38,33 @@ public class GameView : MonoBehaviour
         OceanGameEvent.OnTotalScoreUpdated -= UpdateTotalScore;
         OceanGameEvent.OnGameStarted -= OnGameStarted;
         OceanGameEvent.OnGameCompleted -= OnGameCompleted;
+        OceanGameEvent.OnRollCompleted -= UpdateCurrentRollResult;
     }
 
     private void SetupUI()
     {
         if (rollButton != null)
             rollButton.onClick.AddListener(OnRollButtonClicked);
+        
+        ClearUI();
     }
-
+    private void ClearUI()
+    {
+        for(int i = 0; i < selectedNumberTexts.Length; i++)
+        {
+            if(selectedNumberTexts[i] != null)
+                selectedNumberTexts[i].text = (i+1) + "";
+        }
+        
+        if(currentRollResultText != null)
+            currentRollResultText.text = "0";
+        
+        if(totalText != null)
+            totalText.text = "Total: 0";
+        
+        if(rollCountText != null)
+            rollCountText.text = "Roll: 0/20";
+    }
     public void UpdateUI(int totalSum, int currentRoll, bool canRoll, bool isRolling)
     {
         if (totalText != null)
@@ -62,16 +82,19 @@ public class GameView : MonoBehaviour
         for (int i = 0; i < selectedNumberTexts.Length && i < numbers.Count; i++)
         {
             if (selectedNumberTexts[i] != null)
-                selectedNumberTexts[i].text = $"Selected {i + 1}: {numbers[i]}";
+                selectedNumberTexts[i].text = $"{numbers[i]}";
         }
     }
-
+    private void UpdateCurrentRollResult(int rollTotal)
+    {
+        if(currentRollResultText != null)
+            currentRollResultText.text = $"{rollTotal}";
+    }
     private void UpdateTotalScore(int total)
     {
         if (totalText != null)
             totalText.text = $"Total: {total}";
     }
-
     private void OnGameStarted()
     {
         if (rollButton != null)
