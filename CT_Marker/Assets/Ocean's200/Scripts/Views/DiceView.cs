@@ -22,6 +22,11 @@ public class DiceView : MonoBehaviour
         
     }
     
+    private void Start()
+    {
+        ShowValues(_viewModel.CurrentValues);
+    }
+    
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space) && !_viewModel.IsRolling)
@@ -36,10 +41,6 @@ public class DiceView : MonoBehaviour
         }
     }
     
-    private void Start()
-    {
-        ShowValues(_viewModel.CurrentValues);
-    }
 
     public void UpdateVisuals()
     {
@@ -50,20 +51,7 @@ public class DiceView : MonoBehaviour
 
         _animationCoroutine = StartCoroutine(AnimateDiceRolls());
     }
-
-    private void ShowValues(int[] values)
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            if (values[i] < 1 || values[i] > 6)
-            {
-                continue;
-            }
-
-            diceImages[i].sprite = diceSprites[values[i] - 1];
-        }
-    }
-
+    
     private IEnumerator AnimateDiceRolls()
     {
         _viewModel.StartRolling();
@@ -89,11 +77,23 @@ public class DiceView : MonoBehaviour
         _animationCoroutine = null;
         
         OceanGameEvent.TriggerDiceRolled(_viewModel.CurrentValues);
+        yield return new WaitForSeconds(0.1f); 
         
-        int total = _viewModel.CurrentValues.Sum();
+        int total = 0;
+        for(int i = 0; i < _viewModel.CurrentValues.Length; i++)
+        {
+            total += _viewModel.CurrentValues[i];
+        }
         Debug.Log(total+" : dice total");
         OceanGameEvent.TriggerRollCompleted(total);
-        
-        
     }
+
+    private void ShowValues(int[] values)
+    {
+       for (int i = 0; i < 3; i++)
+        {
+            diceImages[i].sprite = diceSprites[values[i] - 1];
+        }
+    }
+
 }
