@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OceanGameEvent : MonoBehaviour
+public class OceanGameEvent
 {
     public static event Action OnGameStarted;
     public static event Action OnGameCompleted;
