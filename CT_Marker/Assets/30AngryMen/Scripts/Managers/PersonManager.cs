@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Managers
 {
+    /// <summary>
+    /// Manages person spawning, queuing, and interactions with the table using object pooling
+    /// </summary>
     public class PersonManager : MonoBehaviour
     {
         [Header("References")] private Transform tableTransform;
@@ -108,6 +111,9 @@ namespace Managers
             }
         }
 
+        /// <summary>
+        /// Handles the event when a person reaches the table
+        /// </summary>
         private void HandlePersonReachedTable(PersonController person)
         {
             if (person == currentInteractingPerson)
@@ -145,6 +151,9 @@ namespace Managers
             return new Vector3(Resources.rightSideOffset, 0, randomOffset.y);
         }
 
+        /// <summary>
+        /// Processes the next person in queue to interact with the table
+        /// </summary>
         private void ProcessNextPersonInQueue()
         {
             if (queuedPeople.Count == 0) return;
@@ -156,6 +165,9 @@ namespace Managers
             UpdateQueuePositions();
         }
 
+        /// <summary>
+        /// Updates the positions of all people in the queue
+        /// </summary>
         public void UpdateQueuePositions()
         {
             List<PersonController> queueList = new List<PersonController>(queuedPeople);
@@ -168,6 +180,10 @@ namespace Managers
             }
         }
 
+        /// <summary>
+        /// Gets the position in queue based on index
+        /// </summary>
+        /// <returns>Queue position</returns>
         private Vector3 GetQueuePosition(int index)
         {
             return (tableTransform.position + Vector3.back) + Vector3.back * Resources.queueSpacing * (index + 1);

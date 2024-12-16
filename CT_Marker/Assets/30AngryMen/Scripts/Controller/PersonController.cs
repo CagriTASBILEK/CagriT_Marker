@@ -4,6 +4,9 @@ using UnityEngine.AI;
 
 namespace Controller
 {
+    /// <summary>
+    /// Controls person behavior and movement using NavMeshAgent and State Pattern
+    /// </summary>
     public class PersonController : MonoBehaviour, IPoolable
     {
         private BasePersonState currentState;

@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages the core game logic, handling dice rolls, score tracking, and game rules
+/// </summary>
 public class GameModel
 {
     private const int TOTAL_ROLLS = 20;
@@ -29,6 +32,11 @@ public class GameModel
         OceanGameEvent.TriggerTotalScoreUpdated(totalSum);
     }
     
+    /// <summary>
+    /// Starts the game with selected numbers, validating their values (3-18)
+    /// </summary>
+    /// <param name="numbers">List of three selected numbers</param>
+    /// <returns>True if game started successfully</returns>
     public bool StartGame(List<int> numbers)
     {
         if (numbers.Count != 3) return false;
@@ -50,6 +58,10 @@ public class GameModel
         return true;
     }
     
+    /// <summary>
+    /// Calculates dice values based on game state, selected numbers and target total
+    /// </summary>
+    /// <returns>Array of three dice values</returns>
     public int[] CalculateDiceValues()
     {
         if (!isGameActive) return new int[] { 1, 1, 1 };
@@ -85,6 +97,13 @@ public class GameModel
 
         return DistributeValueToDice(targetRollSum);
     }
+    
+    
+    /// <summary>
+    /// Distributes a target sum across three dice values
+    /// </summary>
+    /// <param name="targetSum">Desired sum of dice values</param>
+    /// <returns>Array of three dice values that sum to target</returns>
     private int[] DistributeValueToDice(int targetSum)
     {
         int[] diceValues = new int[3];
@@ -119,6 +138,13 @@ public class GameModel
             OceanGameEvent.TriggerGameCompleted();
         }
     }
+    
+    /// <summary>
+    /// Checks if a number has appeared in its designated roll range
+    /// </summary>
+    /// <param name="number">Number to check</param>
+    /// <param name="index">Index determining the roll range (0:1-10, 1:5-15, 2:10-20)</param>
+    /// <returns>True if number has appeared in its range</returns>
     private bool HasNumberAppeared(int number, int index)
     {
         int startRoll = index == 0 ? 0 : (index == 1 ? 4 : 9);

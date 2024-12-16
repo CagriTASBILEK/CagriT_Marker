@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace State
 {
+    /// <summary>
+    /// Represents the state when a person is moving to a target position, handling queue position checks and arrival events
+    /// </summary>
     public class MovingState : BasePersonState
     {
         private Vector3 targetPosition;
@@ -14,6 +17,12 @@ namespace State
         private float minDistanceToCheck = 1f;
 
 
+        /// <summary>
+        /// Initializes moving state with target position and right side movement flag
+        /// </summary>
+        /// <param name="person">Person controller reference</param>
+        /// <param name="targetPosition">Target position to move to</param>
+        /// <param name="isMovingToRightSide">Flag indicating if moving to right side after interaction</param>
         public MovingState(PersonController person, Vector3 targetPosition, bool isMovingToRightSide = false) 
             : base(person)
         {
@@ -44,6 +53,9 @@ namespace State
                 }
             }
         }
+        /// <summary>
+        /// Checks and updates queue position if person is ahead of the person in front
+        /// </summary>
         private void CheckQueuePosition()
         {
             var personManager = GameManager.Instance.personManager;
